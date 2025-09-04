@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>COYG – Arsenal CZ/SK Fan Web</title>
+  <meta name="description" content="COYG – československá fanouškovská základna Arsenalu. Novinky, přestupy, analýzy, zápasy a komunita." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Saira pro případné nadpisy jako sekundární, primární text = Absans (vlastní import níže) -->
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* === VLASTNÍ FONT: ABSANS ===
+       Nahrajte soubory do /fonts a ponechte stejný název, nebo upravte URL níže. */
+    @font-face {
+      font-family: 'Absans';
+      src: url('/fonts/Absans.woff2') format('woff2'),
+           url('/fonts/Absans.woff') format('woff');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root{
+      --red:#EF0007; /* primární */
+      --blue:#063672; /* doplňková */
+      --white:#ffffff;
+      --bg:#0b0d12; /* tmavé pozadí */
+      --muted:#94a3b8;
+      --card:#0f1320;
+      --border: rgba(255,255,255,0.08);
+      --radius: 22px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#0a0c11 0%, #0b0d12 100%);color:var(--white);font-family:Absans, system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica, sans-serif;}
+    img{max-width:100%;display:block}
+    a{color:var(--white);text-decoration:none}
+    .container{width:min(1200px,92%);margin-inline:auto}
+    .title{font-family:Absans, Saira, system-ui, sans-serif;letter-spacing:.2px}
+
+    /* NAV */
+    .nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(8px);background:linear-gradient(180deg, rgba(11,13,18,.65), rgba(11,13,18,.35));border-bottom:1px solid var(--border)}
+    .nav__inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:38px;height:38px;border-radius:12px;background:conic-gradient(from 210deg, var(--red), #ff3b3b, var(--red));display:grid;place-items:center;box-shadow:0 8px 24px rgba(239,0,7,.35)}
+    .logo span{font-family:Absans,Saira,sans-serif;font-weight:900}
+    .brand h1{font-size:20px;margin:0}
+    .nav a.btn{padding:10px 14px;border:1px solid var(--border);border-radius:12px;transition:.25s ease;}
+    .nav a.btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.25)}
+    .nav__links{display:flex;gap:14px;align-items:center}
+
+    /* HERO s YouTube videem + tmavý overlay + barevný přechod */
+    .hero{position:relative;min-height:72vh;display:grid;place-items:center;overflow:hidden}
+    .hero__video{position:absolute;inset:0;z-index:-2}
+    .hero__video iframe{width:100%;height:100%;object-fit:cover}
+    /* tmavý overlay pro čitelnost textu */
+    .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.65) 60%, rgba(0,0,0,.55) 100%)}
+    /* barevná aura klubových barev */
+    .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 60% at 20% 20%, rgba(239,0,7,.28), transparent 60%), radial-gradient(60% 60% at 90% 80%, rgba(6,54,114,.28), transparent 60%)}
+    .hero__content{position:relative;z-index:1;text-align:center;padding:84px 0}
+    .hero h2{font-family:Absans, Saira, system-ui, sans-serif;font-size:clamp(36px,6vw,68px);line-height:1.05;margin:0 0 10px;}
+    .hero p{color:#d1d5db;margin:0 0 26px;font-size:clamp(16px,2.2vw,18px)}
+    .cta{display:inline-flex;gap:12px;align-items:center;background:linear-gradient(90deg,var(--red),#ff5b5f);padding:14px 18px;border-radius:14px;font-weight:800;box-shadow:0 10px 30px rgba(239,0,7,.35);transition:transform .2s ease}
+    .cta:hover{transform:translateY(-2px) scale(1.01)}
+    .cta--ghost{background:transparent;border:1px solid var(--border);box-shadow:none}
+
+    /* GRID UTILS */
+    .grid{display:grid;gap:22px}
+
+    /* SECTION */
+    section{padding:64px 0;border-top:1px solid var(--border)}
+    section .section__head{display:flex;justify-content:space-between;align-items:end;margin-bottom:22px}
+    .kicker{color:var(--muted);text-transform:uppercase;letter-spacing:.18em;font-weight:800;font-size:12px;margin-bottom:8px}
+    .section__title{font-family:Absans, Saira, system-ui, sans-serif;font-size:clamp(22px,3.3vw,36px);margin:0}
+
+    /* ARTICLE CARDS */
+    .posts{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transform:translateY(0) scale(1);transition:.35s ease}
+    .card:hover{transform:translateY(-6px) scale(1.01)}
+    .card__img{aspect-ratio:16/10;overflow:hidden}
+    .card__img img{width:100%;height:100%;object-fit:cover;transform:scale(1.05);transition:transform .6s ease}
+    .card:hover .card__img img{transform:scale(1.12)}
+    .card__body{padding:16px}
+    .meta{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:6px}
+    .badge{padding:4px 8px;border-radius:999px;background:rgba(6,54,114,.25);border:1px solid rgba(6,54,114,.5);color:#cfe3ff;font-weight:800}
+
+    /* MATCH CENTER */
+    .match-center{display:grid;gap:20px}
+    .tabs{display:flex;gap:8px}
+    .tab{padding:10px 14px;border:1px solid var(--border);border-radius:12px;cursor:pointer;user-select:none}
+    .tab.active{background:linear-gradient(90deg,rgba(6,54,114,.4),rgba(6,54,114,.2));}
+    .fixtures{display:grid;gap:12px}
+    .fixture{display:grid;grid-template-columns:.6fr 1.4fr .8fr;gap:12px;align-items:center;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border:1px solid var(--border);border-radius:16px;padding:12px}
+    .fixture .teams{display:flex;gap:10px;align-items:center;font-weight:800}
+    .fixture .score{font-family:Absans, Saira, system-ui, sans-serif;font-weight:900}
+
+    /* TABLE */
+    .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    table{width:100%;border-collapse:collapse;min-width:680px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0))}
+    th,td{padding:14px;border-bottom:1px solid var(--border);text-align:left}
+    th{font-family:Absans, Saira, system-ui, sans-serif;color:#c6d0e3;font-weight:900}
+    tr.highlight{background:linear-gradient(90deg, rgba(239,0,7,.15), transparent);}
+
+    /* GALLERY */
+    .masonry{columns:3 260px;column-gap:16px}
+    .masonry img{width:100%;border-radius:16px;margin:0 0 16px;border:1px solid var(--border)}
+
+    /* SHARE + COMMENTS */
+    .share{display:flex;gap:10px;flex-wrap:wrap}
+    .share a{border:1px solid var(--border);padding:10px 12px;border-radius:12px}
+
+    /* CONTACT */
+    .contact{display:grid;grid-template-columns:1.2fr .8fr;gap:22px}
+    .form{display:grid;gap:12px}
+    .form input,.form textarea{width:100%;background:#0c111b;border:1px solid var(--border);color:var(--white);padding:12px 14px;border-radius:12px}
+    .form button{background:linear-gradient(90deg,var(--red),#ff5b5f);padding:14px;border:0;color:#fff;border-radius:14px;font-weight:900}
+    .contact .card{height:100%}
+
+    /* FOOTER */
+    footer{padding:30px 0;border-top:1px solid var(--border);color:#adb8cc}
+
+    /* REVEAL ANIMATIONS */
+    .reveal{opacity:0;transform:translateY(20px) scale(.97);}
+    .reveal.show{opacity:1;transform:none;transition:opacity .6s ease, transform .6s ease}
+    .zoom-on-scroll{transform:scale(1.02);transition:transform 1.2s ease}
+    .zoom-on-scroll.in{transform:scale(1)}
+
+    @media (max-width:900px){
+      .contact{grid-template-columns:1fr}
+      .fixture{grid-template-columns:1fr}
+      .nav__links{display:none}
+      .hero__content{padding:64px 0}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav__inner">
+      <div class="brand">
+        <div class="logo"><span>⚽</span></div>
+        <h1 class="title">COYG – Arsenal CZ/SK</h1>
+      </div>
+      <nav class="nav__links">
+        <a href="#clanky" class="btn">Články</a>
+        <a href="#zapasy" class="btn">Zápasy</a>
+        <a href="#tabulka" class="btn">Tabulka</a>
+        <a href="#galerie" class="btn">Galerie</a>
+        <a href="#kontakt" class="btn">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero__video" aria-label="Úvodní video – Arsenal">
+      <iframe title="The pulse of our club | Arsenal 25/26 Home Kit" src="https://www.youtube.com/embed/Rxe0-TnESDs?autoplay=1&mute=1&loop=1&playlist=Rxe0-TnESDs" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    <div class="hero__content container">
+      <div class="kicker">Neoficiální fanouškovská základna</div>
+      <h2 class="title">Všechno o Arsenalu na jednom místě.<br/>Novinky • Přestupy • Analýzy • Komunita</h2>
+      <p>COYG – československá fanouškovská skupina Arsenalu. Přidej se k nám na cestě za trofejemi. 💪🔴⚪</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="cta" href="#clanky">Přejít na články</a>
+        <a class="cta cta--ghost" href="#kontakt">Kontaktovat redakci</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="clanky" class="container">
+    <div class="section__head reveal">
+      <div>
+        <div class="kicker">Obsah</div>
+        <h3 class="section__title title">Nejnovější články</h3>
+      </div>
+      <a href="#" class="btn">Všechny články</a>
+    </div>
+    <div class="grid posts">
+      <article class="card reveal zoom-on-scroll">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1545259741-2ea3ebf61fa4?q=80&w=1600&auto=format&fit=crop" alt="Arsenal article"/></div>
+        <div class="card__body">
+          <div class="meta"><span class="badge">Přestupy</span><span>•</span><span>před 2 h</span></div>
+          <h4 class="title" style="margin:0 0 6px">Andrea Berta: strategie pro budoucnost</h4>
+          <p style="margin:0 0 12px;color:#cbd5e1">Co stojí za letními posilami a kdo může přijít dál? Kontext, čísla, analýza.</p>
+          <div class="share">
+            <a href="#" onclick="shareFB(event)">Sdílet na Facebook</a>
+            <a href="#" onclick="shareTW(event)">Sdílet na X</a>
+            <a href="#" onclick="copyLink(event)">Kopírovat odkaz</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal zoom-on-scroll">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=1600&auto=format&fit=crop" alt="Match analysis"/></div>
+        <div class="card__body">
+          <div class="meta"><span class="badge">Analýza</span><span>•</span><span>včera</span></div>
+          <h4 class="title" style="margin:0 0 6px">Taktický breakdown: pressing & přechody</h4>
+          <p style="margin:0 0 12px;color:#cbd5e1">Jak Artetův tým rozbíjí bloky soupeře a kde má prostor pro zlepšení.</p>
+          <div class="share">
+            <a href="#" onclick="shareFB(event)">Sdílet na Facebook</a>
+            <a href="#" onclick="shareTW(event)">Sdílet na X</a>
+            <a href="#" onclick="copyLink(event)">Kopírovat odkaz</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal zoom-on-scroll">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1486286701208-1d58e9338013?q=80&w=1600&auto=format&fit=crop" alt="Academy"/></div>
+        <div class="card__body">
+          <div class="meta"><span class="badge">Akademie</span><span>•</span><span>před 3 dny</span></div>
+          <h4 class="title" style="margin:0 0 6px">Myles Lewis‑Skelly: další krok</h4>
+          <p style="margin:0 0 12px;color:#cbd5e1">Profil talentu a co od něj čekat v nové sezóně.</p>
+          <div class="share">
+            <a href="#" onclick="shareFB(event)">Sdílet na Facebook</a>
+            <a href="#" onclick="shareTW(event)">Sdílet na X</a>
+            <a href="#" onclick="copyLink(event)">Kopírovat odkaz</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal zoom-on-scroll">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1547347298-4074fc3086f0?q=80&w=1600&auto=format&fit=crop" alt="Fan zone"/></div>
+        <div class="card__body">
+          <div class="meta"><span class="badge">Fan zóna</span><span>•</span><span>před týdnem</span></div>
+          <h4 class="title" style="margin:0 0 6px">Pražský meet‑up + lístky info</h4>
+          <p style="margin:0 0 12px;color:#cbd5e1">Sraz fanoušků, kde sledovat zápasy a jak to bude s lístky.</p>
+          <div class="share">
+            <a href="#" onclick="shareFB(event)">Sdílet na Facebook</a>
+            <a href="#" onclick="shareTW(event)">Sdílet na X</a>
+            <a href="#" onclick="copyLink(event)">Kopírovat odkaz</a>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div style="margin-top:26px" class="reveal">
+      <div class="kicker">Diskuze</div>
+      <div class="card" style="padding:16px">
+        <p style="color:#cbd5e1;margin:0">Ve WordPressu se zde zobrazí komentáře (Gutenberg/komentáře šablony). Do prototypu nejsou zahrnuty kvůli backendu.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="zapasy">
+    <div class="container match-center">
+      <div class="section__head reveal">
+        <div>
+          <div class="kicker">Match Center</div>
+          <h3 class="section__title title">Odehrané a nadcházející zápasy</h3>
+        </div>
+        <div class="tabs" role="tablist">
+          <div class="tab active" data-tab="upcoming" role="tab">Budoucí</div>
+          <div class="tab" data-tab="played" role="tab">Odehrané</div>
+        </div>
+      </div>
+
+      <div class="fixtures reveal" id="fixtures"></div>
+    </div>
+  </section>
+
+  <section id="tabulka" class="container">
+    <div class="section__head reveal">
+      <div>
+        <div class="kicker">Premier League</div>
+        <h3 class="section__title title">Ligová tabulka</h3>
+      </div>
+      <a href="#" class="btn">Detailní statistiky</a>
+    </div>
+    <div class="table-wrap reveal">
+      <table aria-label="Premier League table (ukázka)">
+        <thead>
+          <tr><th>#</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>Skóre</th><th>Body</th></tr>
+        </thead>
+        <tbody id="league-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="galerie" class="container">
+    <div class="section__head reveal">
+      <div>
+        <div class="kicker">Fotogalerie</div>
+        <h3 class="section__title title">Z atmosféry a momentů</h3>
+      </div>
+      <a href="#" class="btn">Nahrát fotky</a>
+    </div>
+    <div class="masonry reveal">
+      <img class="zoom-on-scroll" src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop" alt="Emirates stadium"/>
+      <img class="zoom-on-scroll" src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop" alt="Match crowd"/>
+      <img class="zoom-on-scroll" src="https://images.unsplash.com/photo-1547347298-4074fc3086f0?q=80&w=1600&auto=format&fit=crop" alt="Fans"/>
+      <img class="zoom-on-scroll" src="https://images.unsplash.com/photo-1544010955-1f28b31dd4f3?q=80&w=1600&auto=format&fit=crop" alt="Pitch"/>
+      <img class="zoom-on-scroll" src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=1600&auto=format&fit=crop" alt="Celebration"/>
+    </div>
+  </section>
+
+  <section id="kontakt" class="container">
+    <div class="section__head reveal">
+      <div>
+        <div class="kicker">Spolupráce & tipy</div>
+        <h3 class="section__title title">Kontaktovat redakci</h3>
+      </div>
+      <div class="share">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://example.com" target="_blank" rel="noopener">Sdílet FB</a>
+        <a href="https://twitter.com/intent/tweet?url=https://example.com&text=COYG%20Arsenal%20CZ/SK" target="_blank" rel="noopener">Sdílet X</a>
+        <a href="https://www.facebook.com/COYG" target="_blank" rel="noopener">Sleduj na Facebooku</a>
+      </div>
+    </div>
+
+    <div class="contact">
+      <form class="card form reveal" onsubmit="submitContact(event)">
+        <input type="text" name="name" placeholder="Jméno" required>
+        <input type="email" name="email" placeholder="E‑mail" required>
+        <textarea name="msg" rows="6" placeholder="Zpráva" required></textarea>
+        <label style="display:flex;gap:8px;align-items:center;color:#cbd5e1;font-size:14px"><input type="checkbox" required>Souhlasím se zpracováním osobních údajů</label>
+        <button type="submit">Odeslat</button>
+        <p id="form-status" style="margin:6px 2px 0;color:#9fe6b8"></p>
+      </form>
+
+      <aside class="card reveal" style="padding:18px">
+        <h4 class="title" style="margin:0 0 10px">Rychlé kontakty</h4>
+        <p style="color:#cbd5e1">Tip na článek, spolupráce, press? Napiš nám nebo pošli DM na Facebook.</p>
+        <ul style="list-style:none;padding:0;margin:10px 0;color:#cbd5e1;display:grid;gap:8px">
+          <li>📧 <a href="mailto:redakce@coyg.cz">redakce@coyg.cz</a></li>
+          <li>📱 <a href="https://m.me/COYG" target="_blank" rel="noopener">Messenger: @COYG</a></li>
+          <li>🧾 Media kit: <a href="#">stáhnout PDF</a></li>
+        </ul>
+        <div class="card" style="padding:14px;background:linear-gradient(180deg, rgba(6,54,114,.18), rgba(6,54,114,.05));border:1px solid rgba(6,54,114,.45)">
+          <b class="title" style="font-size:16px">Newsletter</b>
+          <p style="color:#cbd5e1;margin:8px 0 10px">Dostávej souhrny článků a zápasů na e‑mail.</p>
+          <form onsubmit="event.preventDefault();alert('Díky! V ostré verzi napojíme WordPress plugin pro newsletter.');">
+            <input type="email" placeholder="Tvůj e‑mail" required style="width:100%;margin-bottom:10px">
+            <button type="submit" style="width:100%" class="cta">Přihlásit se</button>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div>© <span id="year"></span> COYG – Arsenal CZ/SK • Neoficiální fanouškovský web</div>
+      <div>Design: Absans • Barvy: <span style="color:var(--red)">#EF0007</span>, <span style="color:#7fb0ff">#063672</span>, #fff</div>
+    </div>
+  </footer>
+
+  <script>
+    // Rok ve footeru
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Share helpers
+    function shareFB(e){e.preventDefault(); const u=encodeURIComponent(location.href); window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`,'_blank','noopener');}
+    function shareTW(e){e.preventDefault(); const u=encodeURIComponent(location.href); const t=encodeURIComponent(document.title); window.open(`https://twitter.com/intent/tweet?url=${u}&text=${t}`,'_blank','noopener');}
+    async function copyLink(e){e.preventDefault(); try{await navigator.clipboard.writeText(location.href); alert('Odkaz zkopírován ✅');}catch{}}
+
+    // Reveal on scroll + zoom
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting){
+          ent.target.classList.add('show');
+          if(ent.target.classList.contains('zoom-on-scroll')) ent.target.classList.add('in');
+        }
+      })
+    },{threshold:.22});
+    document.querySelectorAll('.reveal, .zoom-on-scroll').forEach(el=>io.observe(el));
+
+    // Tabs & sample fixtures
+    const fixtures = {
+      upcoming:[
+        {date:'So 14.09.2025', comp:'Premier League', home:'Arsenal', away:'Brentford', time:'18:30'},
+        {date:'St 17.09.2025', comp:'Liga mistrů', home:'Arsenal', away:'Inter', time:'21:00'},
+        {date:'Ne 21.09.2025', comp:'Premier League', home:'Everton', away:'Arsenal', time:'17:30'},
+      ],
+      played:[
+        {date:'Ne 31.08.2025', comp:'Premier League', home:'Arsenal', away:'Leeds', score:'5 : 0'},
+        {date:'So 24.08.2025', comp:'Premier League', home:'Brighton', away:'Arsenal', score:'1 : 2'},
+        {date:'Ne 17.08.2025', comp:'Premier League', home:'Arsenal', away:'Wolves', score:'2 : 1'},
+      ]
+    };
+
+    const fixturesWrap = document.getElementById('fixtures');
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t=>t.addEventListener('click',()=>{
+      tabs.forEach(tt=>tt.classList.remove('active'));
+      t.classList.add('active');
+      renderFixtures(t.dataset.tab);
+    }));
+
+    function renderFixtures(kind='upcoming'){
+      fixturesWrap.innerHTML = '';
+      fixtures[kind].forEach(f=>{
+        const el = document.createElement('div');
+        el.className = 'fixture card';
+        el.innerHTML = `
+          <div class="meta">${f.date} • ${f.comp}</div>
+          <div class="teams">${f.home} vs ${f.away}</div>
+          <div class="score">${f.time || f.score}</div>
+        `;
+        fixturesWrap.appendChild(el);
+      });
+    }
+    renderFixtures('upcoming');
+
+    // Dummy league table (nahraď pluginem ve WordPressu)
+    const league = [
+      {pos:1,team:'Arsenal',p:3,w:3,d:0,l:0,gd:'+8',pts:9},
+      {pos:2,team:'Man City',p:3,w:2,d:1,l:0,gd:'+4',pts:7},
+      {pos:3,team:'Liverpool',p:3,w:2,d:1,l:0,gd:'+3',pts:7},
+      {pos:4,team:'Spurs',p:3,w:2,d:0,l:1,gd:'+2',pts:6},
+      {pos:5,team:'Chelsea',p:3,w:2,d:0,l:1,gd:'+1',pts:6},
+      {pos:6,team:'Newcastle',p:3,w:1,d:1,l:1,gd:'+1',pts:4}
+    ];
+    const tbody = document.getElementById('league-body');
+    league.forEach(r=>{
+      const tr = document.createElement('tr');
+      if(r.team==='Arsenal') tr.classList.add('highlight')
+      tr.innerHTML = `<td>${r.pos}</td><td>${r.team}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gd}</td><td><b>${r.pts}</b></td>`
+      tbody.appendChild(tr);
+    })
+
+    // Contact dummy
+    function submitContact(e){
+      e.preventDefault();
+      const s = document.getElementById('form-status');
+      s.textContent = 'Díky! Ve WordPressu napojíme formulář (např. Contact Form 7 / WPForms).';
+      setTimeout(()=>{s.textContent=''}, 5000)
+    }
+  </script>
+</body>
+</html>
